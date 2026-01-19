@@ -38,33 +38,32 @@ The following diagram illustrates the data lifecycle:
 
 ```mermaid
 sequenceDiagram
-    participant Browser as Browser (DOM)
-    participant Component as ApartmentList (React)
-    participant Effect as useEffect Hook
-    participant Axios as Axios (HTTP Client)
-    participant API as API Server (/getAll)
+    autonumber
+    participant U as Usuario/Navegador
+    participant R as React (ApartmentList)
+    participant S as Estado (useState)
+    participant A as Axios (HTTP Client)
+    participant B as Backend (Spring Boot)
 
-    Note over Component: Initial Render
-    Component->>Browser: Renders "Loading..."
-    Component->>Effect: Triggers effect (deps: [])
+    Note over U, B: Inicio del ciclo de vida
+    U->>R: 1. El componente se monta (Mount)
+    R->>S: 2. Inicializa estados (apartments: [], isLoading: true)
+    R->>R: 3. Ejecuta useEffect()
     
-    rect rgb(240, 248, 255)
-    Note right of Effect: Asynchronous Request Phase
-    Effect->>Axios: get('/api/apartment/getAll')
-    Axios->>API: GET Request
-    API-->>Axios: Returns JSON (Raw Data)
-    Axios-->>Effect: Returns response.data (JS Object)
-    end
-
-    Note over Effect: Data Handling Phase
-    Effect->>Effect: Assignment to 'apartmentsData'
+    Note over R, B: Petición Asíncrona
+    R->>A: 4. Llama fetchApartments() -> axios.get("/api/apartment/getAll")
+    A->>B: 5. Solicitud HTTP GET a la API
+    B->>B: 6. Procesa en @RestController y busca en DB
+    B-->>A: 7. Responde con JSON (List<Apartment>)
     
-    Note over Effect: State Update
-    Effect->>Component: setApartments(apartmentsData)
-    Effect->>Component: setIsLoading(false)
+    Note over A, R: Gestión y Parseo
+    A-->>R: 8. Axios recibe JSON y lo parsea automáticamente a JS Object
+    R->>S: 9. setApartments(apartmentsData) (Línea 15)
+    R->>S: 10. setIsLoading(false) (Línea 16)
     
-    Note over Component: Second Render (Re-render)
-    Component->>Browser: Maps 'apartments' to <li> list
+    Note over R, U: Re-renderizado Final
+    S-->>R: 11. El cambio de estado dispara un nuevo renderizado
+    R->>U: 12. Mapea la lista (apartments.map) y muestra el HTML final
 ```
 
 ---

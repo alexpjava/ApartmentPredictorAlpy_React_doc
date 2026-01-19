@@ -38,33 +38,32 @@ El siguiente diagrama ilustra el ciclo de vida de los datos:
 
 ```mermaid
 sequenceDiagram
-    participant Browser as Navegador (DOM)
-    participant Component as ApartmentList (React)
-    participant Effect as useEffect Hook
-    participant Axios as Axios (HTTP Client)
-    participant API as API Server (/getAll)
+    autonumber
+    participant U as Usuario/Navegador
+    participant R as React (ApartmentList)
+    participant S as Estado (useState)
+    participant A as Axios (HTTP Client)
+    participant B as Backend (Spring Boot)
 
-    Note over Component: Primer Renderizado
-    Component->>Browser: Pinta "Loading..."
-    Component->>Effect: Dispara efecto (deps: [])
+    Note over U, B: Inicio del ciclo de vida
+    U->>R: 1. El componente se monta (Mount)
+    R->>S: 2. Inicializa estados (apartments: [], isLoading: true)
+    R->>R: 3. Ejecuta useEffect()
     
-    rect rgb(240, 248, 255)
-    Note right of Effect: Fase de Petición Asíncrona
-    Effect->>Axios: get('/api/apartment/getAll')
-    Axios->>API: Solicitud GET
-    API-->>Axios: Responde JSON (Raw Data)
-    Axios-->>Effect: Retorna response.data (Objeto JS)
-    end
-
-    Note over Effect: Fase de Gestión de Datos
-    Effect->>Effect: Asignación a 'apartmentsData'
+    Note over R, B: Petición Asíncrona
+    R->>A: 4. Llama fetchApartments() -> axios.get("/api/apartment/getAll")
+    A->>B: 5. Solicitud HTTP GET a la API
+    B->>B: 6. Procesa en @RestController y busca en DB
+    B-->>A: 7. Responde con JSON (List<Apartment>)
     
-    Note over Effect: Actualización de Estado
-    Effect->>Component: setApartments(apartmentsData)
-    Effect->>Component: setIsLoading(false)
+    Note over A, R: Gestión y Parseo
+    A-->>R: 8. Axios recibe JSON y lo parsea automáticamente a JS Object
+    R->>S: 9. setApartments(apartmentsData) (Línea 15)
+    R->>S: 10. setIsLoading(false) (Línea 16)
     
-    Note over Component: Segundo Renderizado (Re-render)
-    Component->>Browser: Mapea 'apartments' a lista <li>
+    Note over R, U: Re-renderizado Final
+    S-->>R: 11. El cambio de estado dispara un nuevo renderizado
+    R->>U: 12. Mapea la lista (apartments.map) y muestra el HTML final
 ```
 
 ## 3. Análisis Técnico del Flujo
