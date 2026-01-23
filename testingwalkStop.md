@@ -1,3 +1,4 @@
+```mermaid
 sequenceDiagram
     autonumber
     participant U as Usuario (Mouse)
@@ -25,6 +26,10 @@ sequenceDiagram
     F->>V: Ejecuta TrafficLight() con walk = false
     V->>V: Evalúa ternario: walk ? 'darkgreen' : 'darkred'
     V-->>U: El H1 cambia de Verde a Rojo y el texto a "Parar"
+```   
+
+
+----------------------------
 
 ```mermaid
 sequenceDiagram
@@ -148,3 +153,96 @@ Si el usuario pulsa varias veces seguidas el botón de “3 segundos”, se prog
 
 **En aplicaciones reales:**  
 Es habitual cancelar o limpiar el temporizador anterior antes de
+
+# El Código: Semáforo con Temporizador
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant U as Usuario
+    participant H as handleDelayChange(3)
+    participant T as Web API (Timer)
+    participant S as State (setWalk)
+    participant V as Vista (DOM)
+
+    U->>H: Clic en el botón
+    H->>T: Inicia setTimeout(3000ms)
+    Note over T: El código sigue corriendo,<br/>pero el cambio está en espera.
+    T-->>S: ¡Tiempo cumplido! Ejecuta setWalk
+    S->>V: Trigger Re-render
+    V-->>U: La luz cambia de color
+```
+
+---
+
+### Ejemplo completo en un fichero `.md`
+
+```md
+# Ejemplo: Semáforo con React
+
+Este componente cambia el estado después de un retraso usando `setTimeout`.
+
+```jsx
+import { useState } from 'react';
+
+export default function TrafficLight() {
+  const [walk, setWalk] = useState(true);
+
+  function handleDelayChange(segundos) {
+    setTimeout(() => {
+      setWalk(s => !s);
+    }, segundos * 1000);
+  }
+
+  return (
+    <>
+      <button onClick={() => handleDelayChange(3)}>
+        Cambiar en 3 segundos
+      </button>
+
+      <h1 style={{ color: walk ? 'darkgreen' : 'darkred' }}>
+        {walk ? 'CAMINAR' : 'PARAR'}
+      </h1>
+    </>
+  );
+}
+```
+
+
+
+## ¿Qué aporta cada elemento nuevo?
+
+### Parámetro `segundos`
+**Descripción:**  
+Al recibir un valor numérico (por ejemplo, `3`), se transforma usando la operación `segundos * 1000`. Esta conversión es necesaria porque JavaScript mide el tiempo en milisegundos  
+*(1 s = 1000 ms)*.
+
+---
+
+### `setTimeout(callback, tiempo)`
+**Descripción:**  
+Es una función propia del navegador que permite ejecutar una acción tras un retraso determinado.
+
+**Funcionamiento:**  
+No bloquea la ejecución de la aplicación. Simplemente registra la función para que se ejecute después del tiempo indicado.
+
+---
+
+### `setWalk(s => !s)`
+**Descripción:**  
+Se pasa una función al *setter* para calcular el nuevo estado a partir del anterior.
+
+**Buena práctica:**  
+Este patrón garantiza que siempre se utilice el valor más reciente de `walk`, algo fundamental cuando el estado depende de actualizaciones previas o procesos asíncronos.
+
+---
+
+### Detalle importante: *Race Conditions*
+Si el botón de “3 segundos” se pulsa varias veces seguidas, se crean múltiples temporizadores que se ejecutarán uno tras otro una vez transcurrido el retraso.
+
+**En aplicaciones reales:**  
+Es común cancelar el temporizador anterior antes de iniciar uno nuevo, evitando comportamientos inesperados o desordenados en la interfaz.
+
+---
+
+¿Te gustaría ver cómo implementar un botón para cancelar el temporizador o cómo hacer que el semáforo cambie automáticamente a intervalos regulares?
