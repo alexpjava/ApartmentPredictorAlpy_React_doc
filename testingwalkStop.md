@@ -98,3 +98,20 @@ React modifica el DOM real. Una vez completado este paso, el navegador repinta l
 - **JSX:** Es la plantilla que React evalúa durante el *Render* para saber qué debe aplicar en el *Commit*.
 
 ---
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant U as Usuario
+    participant H as handleDelayChange(3)
+    participant T as Web API (Timer)
+    participant S as State (setWalk)
+    participant V as Vista (DOM)
+
+    U->>H: Clic en el botón
+    H->>T: Inicia setTimeout(3000ms)
+    Note over T: El código sigue corriendo,<br/>pero el cambio está en espera.
+    T-->>S: ¡Tiempo cumplido! Ejecuta setWalk
+    S->>V: Trigger Re-render
+    V-->>U: La luz cambia de color
+```
