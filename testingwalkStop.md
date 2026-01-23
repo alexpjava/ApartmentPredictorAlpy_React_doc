@@ -115,3 +115,36 @@ sequenceDiagram
     S->>V: Trigger Re-render
     V-->>U: La luz cambia de color
 ```
+
+## Explicación de los nuevos elementos del código
+
+### Parámetro `segundos`
+**Función:**  
+Al recibir un valor numérico (por ejemplo, `3`), se realiza la conversión `segundos * 1000`. Esto es necesario porque JavaScript trabaja con milisegundos  
+*(1 segundo = 1000 ms)*.
+
+---
+
+### `setTimeout(callback, tiempo)`
+**Función:**  
+Es una función nativa del navegador que permite ejecutar una acción después de un intervalo determinado.
+
+**Comportamiento técnico:**  
+No bloquea la ejecución del resto de la aplicación. Simplemente registra la función en el temporizador interno del navegador para que se ejecute cuando se cumpla el tiempo indicado.
+
+---
+
+### `setWalk(s => !s)`
+**Función:**  
+Se utiliza una función dentro del *setter* para calcular el nuevo estado a partir del valor anterior.
+
+**Buena práctica en React:**  
+Este enfoque garantiza que siempre se utilice el estado más reciente de `walk`, lo cual es especialmente importante cuando hay actualizaciones asíncronas o múltiples cambios consecutivos.
+
+---
+
+### Detalle importante: *Race Conditions*
+Si el usuario pulsa varias veces seguidas el botón de “3 segundos”, se programarán múltiples cambios de estado que se ejecutarán uno tras otro cuando termine el retraso.
+
+**En aplicaciones reales:**  
+Es habitual cancelar o limpiar el temporizador anterior antes de
