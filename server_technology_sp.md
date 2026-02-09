@@ -134,3 +134,49 @@ nvm → Node.js → npm → { Vite, Axios }
 * **Axios**: cliente HTTP para consumir APIs
 
 ---
+
+## 5. Correspondencias entre Stack Frontend (JavaScript) y Backend (Java)
+
+## Correspondencias directas
+
+| Frontend (JavaScript) | Backend (Java) | Función |
+|----------------------|----------------|---------|
+| **JavaScript** | **Java** | El lenguaje de programación base |
+| **Node.js** | **JVM (Java Virtual Machine)** | El entorno de ejecución |
+| **npm** | **Maven** | Gestor de dependencias y herramientas de construcción |
+| **React** | **Spring Framework** | Biblioteca/framework para construir aplicaciones |
+| **Next.js** | **Spring Boot** | Framework que simplifica y añade funcionalidades predefinidas |
+
+## Explicación de las similitudes
+
+### Maven ↔ npm
+- Ambos gestionan las dependencias (librerías externas)
+- Ambos construyen y empaquetan tu proyecto
+- Maven usa `pom.xml`, npm usa `package.json`
+
+### Spring Boot ↔ Next.js
+- Ambos son "opinionated frameworks" (tienen convenciones predefinidas)
+- Simplifican la configuración inicial
+- Añaden funcionalidades extras sobre el framework base
+- Spring Boot extiende Spring, Next.js extiende React
+
+### Java + Spring Boot ↔ JavaScript + React
+- Java con Spring Boot → Backend (servidor, base de datos, APIs)
+- JavaScript con React → Frontend (interfaz de usuario, navegador)
+
+## Arquitectura típica completa
+```
+FRONTEND:
+JavaScript → Node.js → React → Next.js
+(Interfaz visual en el navegador)
+         ↓
+      API REST
+         ↓
+BACKEND:
+Java → JVM → Spring → Spring Boot
+(Lógica de negocio y datos en el servidor)
+```
+
+## Notas adicionales
+
+Si se viene del mundo Java, la transición a JavaScript/React será más fácil entendiendo estas correspondencias. Los conceptos de componentes en React son similares a las clases en Java, y el manejo de dependencias con npm es análogo a Maven o Gradle.
